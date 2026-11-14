@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5689840532576176663
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1167082391814586851}
+  - component: {fileID: 561843376298041678}
+  - component: {fileID: 7920912232058636338}
+  m_Layer: 0
+  m_Name: LevelSystems
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1167082391814586851
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5689840532576176663}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &561843376298041678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5689840532576176663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5ce16a0be195f049a59b4ec6e4a887e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelManager
+  indiceUltimoNivel: 2
+  volverAlInicioAlTerminar: 0
+--- !u!114 &7920912232058636338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5689840532576176663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 095cd0d97649eb047a79e9474fb6ee81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DifficultyManager
+  levelManager: {fileID: 561843376298041678}
+  niveles:
+  - nombre: "Nivel 1 - F\xE1cil"
+    velocidadElementos: 1
+    tiempoLimiteSegundos: 90
+    margenErrorSegundos: 0.3
+    fallosPermitidos: 10
+  - nombre: Nivel 2 - Medio
+    velocidadElementos: 1.25
+    tiempoLimiteSegundos: 75
+    margenErrorSegundos: 0.2
+    fallosPermitidos: 7
+  - nombre: "Nivel 3 - Dif\xEDcil"
+    velocidadElementos: 1.5
+    tiempoLimiteSegundos: 60
+    margenErrorSegundos: 0.12
+    fallosPermitidos: 4
+  iniciarTemporizadorAutomaticamente: 0
+  reiniciarNivelAlAgotarTiempo: 1
+  OnTiempoAgotado:
+    m_PersistentCalls:
+      m_Calls: []
