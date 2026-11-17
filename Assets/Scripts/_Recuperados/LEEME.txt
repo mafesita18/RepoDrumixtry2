@@ -1,0 +1,7 @@
+Placeholders FUNCIONALES para que las escenas del equipo abran y funcionen sin "missing script" (los originales no venían en el Drive).
+Campos y GUIDs sacados de las escenas, así no se pierde nada configurado.
+- TargetZoneTrigger.cs (GUID 5165c131...): SensorBowl. Si entra el objeto esperado suena successSound y avisa ACIERTO a DRUMIX (público/UI).
+- AutoInstructions.cs  (GUID f75ea35e...): GestorInstrucciones. Muestra instructionsUI y la oculta tras displayTime s (Mostrar() la vuelve a mostrar).
+- SequenceManager.cs: ValidarError() registra un FALLO en DRUMIX (público abuchea / puede lanzar); ValidarAcierto() un acierto.
+- successSound_recuperado.wav (GUID af232046...): campanita de acierto generada para DRUMIX (dominio público / CC0) con el GUID que esperan las escenas.
+Cuando lleguen los originales del repo: borra el archivo Y su .meta de aquí y pon el original con SU .meta (igual con el sonido).

@@ -1,0 +1,20 @@
+newmtl NeonStrip_dark
+Kd 0.1000 0.1050 0.1200
+Ke 0.0000 0.0000 0.0000
+d 1.0
+illum 2
+
+newmtl NeonStrip_metal
+Kd 0.7200 0.7400 0.7800
+Ke 0.0000 0.0000 0.0000
+d 1.0
+illum 2
+
+newmtl NeonStrip_neon
+Kd 0.8600 0.1600 0.5600
+Ke 0.6200 0.0600 0.3400
+d 1.0
+illum 2
+
+newmtl m_default
+Kd 0.8 0.8 0.8

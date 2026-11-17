@@ -1,0 +1,4 @@
+Este archivo marca que este es un PROYECTO DRUMIX listo para abrir (aquí: el proyecto COMPLETO del equipo + DRUMIX).
+Mientras exista, Editor/DrumixProyectoSetup.cs revisa el proyecto y arma la escena DRUMIX_Bar UNA sola vez al abrirlo
+(solo arregla lo que falta; no toca las escenas del equipo y agrega DRUMIX_Bar AL FINAL de Build Settings).
+NO copies la carpeta DRUMIX_Proyecto al repo del equipo: al repo solo va Assets/DRUMIX.

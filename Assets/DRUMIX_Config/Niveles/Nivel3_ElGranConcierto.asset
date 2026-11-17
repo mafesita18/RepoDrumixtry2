@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73c60fdfaca7827112273ece25f41843, type: 3}
+  m_Name: Nivel3_ElGranConcierto
+  m_EditorClassIdentifier: Drumix.Runtime::Drumix.DrumixLevel
+  spec:
+    name: El Gran Concierto
+    subtitle: "Nivel 3 \xB7 estadio lleno"
+    pattern: 2
+    bpm: 104
+    bars: 16
+    seed: 777
+    perfectWindow: 0.07
+    goodWindow: 0.13
+    passPercent: 50
+    leadTime: 1.2
+    comboStep: 10
+    lanes: 0000000001000000020000000300000004000000050000000600000007000000
+  music: {fileID: 0}
+  musicVolume: 0.5

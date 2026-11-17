@@ -130,7 +130,7 @@ public class DifficultyManager : MonoBehaviour
     private void Awake()
     {
         if (levelManager == null)
-            levelManager = FindFirstObjectByType<LevelManager>();
+            levelManager = FindAnyObjectByType<LevelManager>();
 
         if (levelManager == null)
             Debug.LogWarning("[DifficultyManager] No se encontró un LevelManager en la escena. Se usará el nivel 1.");

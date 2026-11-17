@@ -1,0 +1,20 @@
+newmtl StageMonitor_black
+Kd 0.0900 0.0900 0.1000
+Ke 0.0000 0.0000 0.0000
+d 1.0
+illum 2
+
+newmtl StageMonitor_grille
+Kd 0.2300 0.2400 0.2600
+Ke 0.0000 0.0000 0.0000
+d 1.0
+illum 2
+
+newmtl StageMonitor_metal
+Kd 0.6200 0.6400 0.6700
+Ke 0.0000 0.0000 0.0000
+d 1.0
+illum 2
+
+newmtl m_default
+Kd 0.8 0.8 0.8

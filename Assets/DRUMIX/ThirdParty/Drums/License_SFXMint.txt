@@ -1,0 +1,7 @@
+SFXMint — Acoustic Drum & Cymbal Samples
+CC0 1.0 Universal — https://creativecommons.org/publicdomain/zero/1.0/
+Source: https://sfxmint.com/sets/acoustic-drum-kit
+Five public MP3 downloads, no account/API key. Source explicitly states all sounds CC0.
+Adaptations: decoded to mono44100Hz PCM16 WAV. Tom2 = high tom at0.8 pitch; FloorTom = high tom at0.63 pitch.
+These two toms are pitch variants, NOT distinct recorded drums. Snare is a separate Spring Spring CC0 asset.
+Original URLs, download hashes and final file hashes in ASSETS.json at project root.

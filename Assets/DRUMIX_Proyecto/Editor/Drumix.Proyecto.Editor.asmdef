@@ -1,0 +1,19 @@
+{
+    "name": "Drumix.Proyecto.Editor",
+    "rootNamespace": "Drumix.Proyecto",
+    "references": [
+        "Drumix.Runtime",
+        "Drumix.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

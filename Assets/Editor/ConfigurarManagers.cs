@@ -62,7 +62,7 @@ public static class ConfigurarManagers
 
     private static void MontarAudioManager(List<string> informe)
     {
-        var audio = Object.FindFirstObjectByType<AudioManager>();
+        var audio = Object.FindAnyObjectByType<AudioManager>();
         if (audio == null)
         {
             var go = new GameObject("AudioManager");
@@ -121,7 +121,7 @@ public static class ConfigurarManagers
     [MenuItem("Drumixtry/3. Asignar sonidos al AudioManager (por nombre)")]
     public static void AsignarSonidosPorNombre()
     {
-        var audio = Object.FindFirstObjectByType<AudioManager>();
+        var audio = Object.FindAnyObjectByType<AudioManager>();
         if (audio == null)
         {
             EditorUtility.DisplayDialog("Drumixtry", "Abre la escena del Nivel 1: ahí está el AudioManager.", "OK");
@@ -171,7 +171,11 @@ public static class ConfigurarManagers
         var escena = EditorSceneManager.OpenScene(rutaNueva, OpenSceneMode.Single);
 
         // El AudioManager vive solo en el Nivel 1 (persiste con DontDestroyOnLoad).
+#if UNITY_6000_5_OR_NEWER
+        foreach (var audio in Object.FindObjectsByType<AudioManager>())
+#else
         foreach (var audio in Object.FindObjectsByType<AudioManager>(FindObjectsSortMode.None))
+#endif
         {
             informe.Add("AudioManager duplicado eliminado de " + rutaNueva);
             Object.DestroyImmediate(audio.gameObject);
@@ -204,12 +208,12 @@ public static class ConfigurarManagers
         if (prefab == null)
             prefab = CrearPrefabLevelSystems(informe);
 
-        var existente = Object.FindFirstObjectByType<LevelManager>();
+        var existente = Object.FindAnyObjectByType<LevelManager>();
         if (existente != null)
         {
             // La escena ya trae su propio LevelManager (ej. en "GameController"):
             // no se duplica; solo se añade el DifficultyManager al mismo objeto si falta.
-            var difficulty = Object.FindFirstObjectByType<DifficultyManager>();
+            var difficulty = Object.FindAnyObjectByType<DifficultyManager>();
             if (difficulty == null)
             {
                 difficulty = Undo.AddComponent<DifficultyManager>(existente.gameObject);

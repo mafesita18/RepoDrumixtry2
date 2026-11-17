@@ -1,0 +1,21 @@
+CC0 1.0 Universal (dominio público) — https://creativecommons.org/publicdomain/zero/1.0/
+Fuente: 3DAssets.dev (contribuidor "3D Assets", @3dassets). Sin atribución requerida (crédito voluntario).
+Según la página, los modelos fueron hechos con ayuda de IA (reportado por el contribuidor).
+Convertidos de GLB a OBJ+MTL con DRUMIX tools/glb2obj.py (solo geometría + colores; sin texturas). Colores de BeerBottle/PintGlass cambiados a ámbar.
+
+BarCounter      https://3dassets.dev/assets/bar-pub-and-brewery-taproom-bar-counter-module-4f0062bc
+BackBarSpirits  https://3dassets.dev/assets/bar-pub-and-brewery-taproom-back-bar-spirit-shelf-run-6d07bb41
+BackBarGlasses  https://3dassets.dev/assets/bar-pub-and-brewery-taproom-back-bar-glass-shelf-run-e3f9b54c
+BarStool        https://3dassets.dev/assets/bar-pub-and-brewery-taproom-bar-stool-backless-9deb2174
+BarStoolBack    https://3dassets.dev/assets/bar-pub-and-brewery-taproom-bar-stool-with-back-809cad98
+HighTable       https://3dassets.dev/assets/bar-pub-and-brewery-taproom-taproom-high-table-b3365a27
+PubTableRound   https://3dassets.dev/assets/bar-pub-and-brewery-taproom-pub-table-round-pedestal-3936d6f5
+PintGlass       https://3dassets.dev/assets/bar-pub-and-brewery-taproom-pint-glass-nonic-6193e3f3
+BeerBottle      https://3dassets.dev/assets/bar-pub-and-brewery-taproom-beer-bottle-4b603278
+BarLightbox     https://3dassets.dev/assets/bar-pub-and-brewery-taproom-back-bar-lightbox-fadb8345
+StageMonitor    https://3dassets.dev/assets/live-music-venue-and-festival-stage-stage-monitor-wedg-a1ada15e
+GuitarAmp       https://3dassets.dev/assets/live-music-venue-and-festival-stage-guitar-amp-stack-9d8c42bd
+LightingBar     https://3dassets.dev/assets/live-music-venue-and-festival-stage-lighting-bar-with--9d1b9fb6
+MicBoom         https://3dassets.dev/assets/live-music-venue-and-festival-stage-microphone-on-boom-b553a46d
+PASpeaker       https://3dassets.dev/assets/village-hall-and-community-events-pa-speaker-on-stand-7ffa787e
+NeonStrip       https://3dassets.dev/assets/cyberpunk-apartment-and-neon-block-neon-strip-run-863a00d1

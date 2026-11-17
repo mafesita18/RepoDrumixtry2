@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73c60fdfaca7827112273ece25f41843, type: 3}
+  m_Name: Nivel1_ElGaraje
+  m_EditorClassIdentifier: Drumix.Runtime::Drumix.DrumixLevel
+  spec:
+    name: El Garaje
+    subtitle: "Nivel 1 \xB7 calentando"
+    pattern: 0
+    bpm: 76
+    bars: 8
+    seed: 11
+    perfectWindow: 0.12
+    goodWindow: 0.28
+    passPercent: 50
+    leadTime: 1.8
+    comboStep: 10
+    lanes: 00000000010000000200000006000000
+  music: {fileID: 0}
+  musicVolume: 0.5

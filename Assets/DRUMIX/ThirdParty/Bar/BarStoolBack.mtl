@@ -1,0 +1,20 @@
+newmtl BarStoolBack_surface
+Kd 0.4000 0.2600 0.1500
+Ke 0.0000 0.0000 0.0000
+d 1.0
+illum 2
+
+newmtl BarStoolBack_accent
+Kd 0.7200 0.5500 0.2400
+Ke 0.0000 0.0000 0.0000
+d 1.0
+illum 2
+
+newmtl BarStoolBack_soft
+Kd 0.3600 0.1300 0.1500
+Ke 0.0000 0.0000 0.0000
+d 1.0
+illum 2
+
+newmtl m_default
+Kd 0.8 0.8 0.8
