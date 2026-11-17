@@ -3970,13 +3970,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   fuenteAmbiente: {fileID: 0}
   fuenteSFX: {fileID: 0}
-  clipAmbiente: {fileID: 0}
+  clipAmbiente: {fileID: 8300000, guid: f881c2e379c99ab4dbb362a61240e6a1, type: 3}
   reproducirAmbienteAlIniciar: 1
-  sfxClicBoton: {fileID: 8300000, guid: 7f6694ce1f7834642b6902a6393cb207, type: 3}
-  sfxExito: {fileID: 8300000, guid: ea7cd8b219b2dce4290e1bc4d75e5611, type: 3}
-  sfxError: {fileID: 8300000, guid: 3b2d5f74695b7d44f9975e8f80a8f340, type: 3}
-  sfxGanarNivel: {fileID: 8300000, guid: ea7cd8b219b2dce4290e1bc4d75e5611, type: 3}
-  sfxPerderNivel: {fileID: 8300000, guid: 3b2d5f74695b7d44f9975e8f80a8f340, type: 3}
+  sfxClicBoton: {fileID: 8300000, guid: 0dd5eceedd021de41be94f3deac087cc, type: 3}
+  sfxExito: {fileID: 8300000, guid: 713d68c006d2d3a468093fbd3dbd8a25, type: 3}
+  sfxError: {fileID: 8300000, guid: b20d90f06ac9b244ba20d996a3d2bf34, type: 3}
+  sfxGanarNivel: {fileID: 8300000, guid: 05327ee73e4a02d45bdd9de7809234f7, type: 3}
+  sfxPerderNivel: {fileID: 8300000, guid: 753ccd45802de0a4e8812166ab903c0c, type: 3}
   volumenMaestro: 0.8
   volumenAmbiente: 0.4
   volumenSFX: 0.7
