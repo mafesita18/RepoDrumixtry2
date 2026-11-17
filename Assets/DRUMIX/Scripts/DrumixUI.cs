@@ -12,7 +12,7 @@ namespace Drumix
     /// UI completa de DRUMIX en UN canvas (estilo "grabado" de BateriaVR, adaptado al proyecto nuevo):
     /// menú principal → Dante (bienvenida) → niveles (Assets/DRUMIX_Config/Niveles, con desbloqueo) → HUD (barra de puntaje,
     /// carril de notas de 8 teclas A..K, feedback chico arriba, cuenta 3-2-1 al centro) → pausa / ajustes / calibración → resultados.
-    /// PC sin visor: pantalla completa. Visor/Quest: panel 3D delante (la guía es el aro que se cierra sobre cada pad).
+    /// Siempre panel 3D flotante delante de la cámara (la guía es el aro que se cierra sobre cada pad), salvo Modo.PantallaCompleta.
     /// Se construye sola por código; las posiciones del HUD están en DrumixUILayout (probadas: nada se encima).
     public class DrumixUI : MonoBehaviour
     {
@@ -23,9 +23,13 @@ namespace Drumix
         [Tooltip("Raycaster extra para VR (lo pone el builder si hay XRI): TrackedDeviceGraphicRaycaster.")]
         public string xrRaycasterType = "";
         public enum Modo { Auto, PantallaCompleta, PanelVR }
-        [Tooltip("Auto: pantalla completa en PC sin visor, panel 3D con visor/Quest.")]
-        public Modo modo = Modo.Auto;
+        [Tooltip("PanelVR y Auto: panel flotante. PantallaCompleta: overlay en toda la pantalla.")]
+        public Modo modo = Modo.PanelVR;
         public float waitForHeadset = 0.8f;
+        public float panelDistance = 1.6f;
+        public float panelHeightOffset = -0.15f;
+        public float followSpeed = 3f;
+        public float recenterAngle = 35f;
 
         [Header("Historia")]
         public string playerName = "Roxy";
@@ -39,8 +43,9 @@ namespace Drumix
         public bool IsFullScreen { get; private set; }
         public Canvas Canvas { get; private set; }
         public DrumixScreen Screen { get { return flow.Screen; } }
-        float modeTimer, recheckTimer; bool modeDecided;
+        bool panelPlaced;
         const string CanvasName = "DRUMIX_Canvas";
+        const float PanelDistanceSlack = 0.25f;
 
         readonly DrumixUIFlow flow = new DrumixUIFlow();
         readonly DrumixDialogue dialogue = new DrumixDialogue();
@@ -110,6 +115,7 @@ namespace Drumix
             Canvas = go.GetComponent<Canvas>();
             Canvas.renderMode = RenderMode.WorldSpace;
             Canvas.sortingOrder = 10;
+            panelPlaced = false;
             var rt = (RectTransform)go.transform;
             rt.sizeDelta = canvasSize; rt.localScale = Vector3.one * metersPerPixel;
             go.GetComponent<CanvasScaler>().dynamicPixelsPerUnit = 3f;
@@ -699,27 +705,51 @@ namespace Drumix
         }
 
         // =====================================================================================  PC / VR
-        /// Visor real o simulador XR elegido a propósito (useXRSimulator) = panel VR; si no, pantalla completa (PC).
-        static bool HeadsetActive() { return DrumixXR.XRViewActive(); }
         void UpdateMode()
         {
             if (!Canvas) return;
-            float dt = Time.unscaledDeltaTime;
-            if (!modeDecided)
+            if (modo != Modo.PantallaCompleta)
             {
-                modeTimer += dt;
-                if (modo == Modo.PantallaCompleta) { SetFullScreen(true); modeDecided = true; }
-                else if (modo == Modo.PanelVR || Application.isMobilePlatform || HeadsetActive()) { SetFullScreen(false); modeDecided = true; }
-                else if (modeTimer >= waitForHeadset) { SetFullScreen(true); modeDecided = true; Debug.Log("[DRUMIX] Sin visor: UI en pantalla completa."); }
+                SetFullScreen(false);
                 return;
             }
-            if (modo != Modo.Auto || Application.isMobilePlatform) return;
-            recheckTimer += dt;
-            if (recheckTimer < 2f) return;
-            recheckTimer = 0f;
-            bool hmd = HeadsetActive();
-            if (hmd && IsFullScreen) SetFullScreen(false);
-            else if (!hmd && !IsFullScreen) SetFullScreen(true);
+            if (!IsFullScreen) SetFullScreen(true);
+        }
+
+        void LateUpdate()
+        {
+            if (IsFullScreen || !Canvas) return;
+            var cam = Camera.main;
+            if (!cam) return;
+            Canvas.worldCamera = cam;
+
+            var camT = cam.transform;
+            Vector3 flat = camT.forward;
+            flat.y = 0f;
+            if (flat.sqrMagnitude < 0.0001f) flat = Vector3.forward;
+            else flat.Normalize();
+
+            bool hud = flow.Screen == DrumixScreen.Hud;
+            float height = hud ? panelHeightOffset - 0.45f : panelHeightOffset;
+            Vector3 targetPos = camT.position + flat * panelDistance + Vector3.up * height;
+            Quaternion targetRot = Quaternion.LookRotation(flat);
+
+            var t = Canvas.transform;
+            if (!panelPlaced)
+            {
+                t.SetPositionAndRotation(targetPos, targetRot);
+                panelPlaced = true;
+                return;
+            }
+
+            Vector3 toPanel = t.position - camT.position;
+            float angle = toPanel.sqrMagnitude > 0.0001f ? Vector3.Angle(camT.forward, toPanel) : 180f;
+            bool distanceOff = Vector3.Distance(t.position, targetPos) > PanelDistanceSlack;
+            if (angle <= recenterAngle && !distanceOff) return;
+
+            float step = Mathf.Clamp01(followSpeed * Time.unscaledDeltaTime);
+            t.position = Vector3.Lerp(t.position, targetPos, step);
+            t.rotation = Quaternion.Slerp(t.rotation, targetRot, step);
         }
 
         /// true = Screen Space Overlay a pantalla completa (PC); false = panel world-space (VR).
@@ -731,6 +761,7 @@ namespace Drumix
             var scaler = Canvas.GetComponent<CanvasScaler>();
             if (on)
             {
+                panelPlaced = false;
                 Canvas.renderMode = RenderMode.ScreenSpaceOverlay;
                 if (scaler)
                 {
@@ -742,11 +773,12 @@ namespace Drumix
             }
             else
             {
+                bool entering = Canvas.renderMode != RenderMode.WorldSpace;
                 Canvas.renderMode = RenderMode.WorldSpace;
                 if (scaler) { scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize; scaler.scaleFactor = 1f; scaler.dynamicPixelsPerUnit = 3f; }
-                rt.localPosition = Vector3.zero; rt.localRotation = Quaternion.identity;
                 rt.sizeDelta = canvasSize; rt.localScale = Vector3.one * metersPerPixel;
                 Canvas.worldCamera = Camera.main;
+                if (entering) panelPlaced = false;
             }
         }
 
