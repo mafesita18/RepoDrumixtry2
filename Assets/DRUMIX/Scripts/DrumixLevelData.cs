@@ -121,6 +121,14 @@ namespace Drumix
             return best;
         }
 
+        /// ¿El .unity tiene un DRUMIX_ROOT generado por DRUMIX (con DrumixRootInfo: campos builtWith/builtVersion)?
+        /// Un objeto que alguien llamó igual a mano NO cuenta (no se borra).
+        public static bool HasGeneratedRootInSceneText(string sceneYaml, string rootName)
+        {
+            if (BuiltVersionInSceneText(sceneYaml, rootName) < 0) return false;
+            return sceneYaml.IndexOf("builtWith: ", StringComparison.Ordinal) >= 0 && sceneYaml.IndexOf("builtVersion: ", StringComparison.Ordinal) >= 0;
+        }
+
         public static int NextIndex(int current, int count, bool passed)
         {
             if (count <= 0) return 0;

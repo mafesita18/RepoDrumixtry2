@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BackUpNiveles.unity
     guid: 8a3680e3dc0b0604799cf9dff7b5febc
+  - enabled: 1
+    path: Assets/DRUMIX/Scenes/DRUMIX_Bar.unity
+    guid: 3097871b2ef3be24480d68992031ce57
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260, type: 2}
     Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: dc5a169419fa04987b057f65238cf3ba, type: 2}

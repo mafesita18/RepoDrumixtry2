@@ -21,7 +21,9 @@ namespace Drumix.EditorTools
         public const string RootName = "DRUMIX_ROOT";
         public const string ScenePath = "Assets/DRUMIX/Scenes/DRUMIX_Bar.unity";
         /// Sube cuando cambia lo que arma ARMAR TODO: las escenas armadas con una versión menor se rearman solas al abrir Unity.
-        public const int BuildVersion = 6; // 6: público grande del concierto (48, estático), bar no se cancela, paredes del bar, haces hacia el público, público a ≥ 2.8 m
+        /// Hornear el público grande a malla estática. APAGADO (más seguro): queda animado normal (skinned).
+        public const bool BakeCrowdMeshes = false;
+        public const int BuildVersion = 8; // 8: vista PC sin pelear con el simulador XR, un solo XR Origin a escala 1, limpieza de DRUMIX_ROOT fuera de los niveles.  7: el horneado del público recalcula bounds (en v6 quedaba skinned).  6: público grande del concierto (48, estático), bar no se cancela, paredes del bar, haces hacia el público, público a ≥ 2.8 m
         const string Generated = "Assets/DRUMIX/Generated";
 
         struct PieceSpec
@@ -142,6 +144,8 @@ namespace Drumix.EditorTools
             string mainReport = report.ToString();
             var team = BuildTeamScenes(levelAssets);
             report.Insert(0, mainReport);
+            try { int cleaned = DrumixSceneGuard.CleanProjectScenes(); if (cleaned > 0) report.AppendLine("Limpieza: quité DRUMIX_ROOT de " + cleaned + " escena(s) que no son niveles."); }
+            catch (Exception e) { Debug.LogException(e); }
             string openPath = team.Count > 0 ? team[0] : ScenePath;
             if (SceneManager.GetActiveScene().path != openPath) EditorSceneManager.OpenScene(openPath, OpenSceneMode.Single);
 
@@ -298,8 +302,8 @@ namespace Drumix.EditorTools
                 Mesh cached; bakedCrowd.TryGetValue(smr.sharedMesh, out cached);
                 var tries = new List<Func<Mesh>>();
                 if (cached) tries.Add(() => cached);
-                tries.Add(() => { var m = new Mesh(); smr.BakeMesh(m, false); return m; });
-                tries.Add(() => { var m = new Mesh(); smr.BakeMesh(m, true); return m; });
+                tries.Add(() => { var m = new Mesh(); smr.BakeMesh(m, true); m.RecalculateBounds(); return m; });  // con escala: mismos TRS que el skinned
+                tries.Add(() => { var m = new Mesh(); smr.BakeMesh(m, false); m.RecalculateBounds(); return m; });
                 bool ok = false;
                 foreach (var make in tries)
                 {
@@ -326,7 +330,7 @@ namespace Drumix.EditorTools
                     smr.enabled = true; UnityEngine.Object.DestroyImmediate(go);
                     if (mesh != cached) UnityEngine.Object.DestroyImmediate(mesh);
                 }
-                if (!ok) Debug.LogWarning("[DRUMIX] " + space.name + ": no se pudo hornear la malla sin cambiar la medida; se deja animada (skinned).");
+                if (!ok) Debug.LogWarning("[DRUMIX] " + space.name + ": no se pudo hornear la malla sin cambiar la medida (alto " + before.size.y.ToString("0.00") + " m, pies " + before.min.y.ToString("0.00") + "); se deja animada (skinned).");
             }
             return any;
         }
@@ -1594,13 +1598,13 @@ namespace Drumix.EditorTools
                     if (crowdBig)
                     {
                         // Público grande (Quest): malla estática compartida (sin skinning por cuadro), sin sombras, animación escalonada.
-                        if (BakeStatic(visual, npc.transform)) crowdBaked++;
+                        if (BakeCrowdMeshes && BakeStatic(visual, npc.transform)) crowdBaked++; // apagado: sin probar en Unity, el público queda animado normal
                         foreach (var r in visual.GetComponentsInChildren<Renderer>(true)) { r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; r.receiveShadows = false; }
                         c2.updateEvery = index > 12 ? 2 : 1;
                     }
                 }
 
-            if (crowdBig) report.AppendLine("  Público grande: " + crowdBaked + " persona(s) con malla estática compartida (sin skinning), sin sombras, animación escalonada.");
+            if (crowdBig) report.AppendLine("  Público grande: sin sombras y con animación escalonada" + (crowdBaked > 0 ? ", " + crowdBaked + " con malla estática compartida." : " (animado normal, sin hornear)."));
             director.templates = BuildThrowables(crowd.transform);
             report.AppendLine("  Público creado: " + (crowdModels + crowdPrims) + " personas (" + crowdModels + " modelos, " + crowdPrims + " de primitivas" +
                               (crowdFixed > 0 ? ", " + crowdFixed + " cambiadas a primitivas por medida rara" : "") + ").");

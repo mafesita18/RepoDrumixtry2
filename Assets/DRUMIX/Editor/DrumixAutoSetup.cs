@@ -13,7 +13,8 @@ namespace Drumix.EditorTools
     [InitializeOnLoad]
     public static class DrumixAutoSetup
     {
-        const string SessionKey = "DRUMIX_AutoSetup_Hecho";
+        // Con la versión en la clave: si llegan scripts nuevos con Unity abierto (Cursor/Pull), se vuelve a revisar sin reiniciar Unity.
+        static readonly string SessionKey = "DRUMIX_AutoSetup_Hecho_v" + DrumixBuilder.BuildVersion;
         const string PrefOff = "DRUMIX_AutoArmarApagado";
         const string MenuOff = "DRUMIX/Opciones/Armar solo al abrir Unity";
         const string StandaloneMarker = "Assets/DRUMIX_Proyecto/PROYECTO_STANDALONE.txt";
@@ -39,14 +40,29 @@ namespace Drumix.EditorTools
             SessionState.SetBool(SessionKey, true);
             // El proyecto standalone (DRUMIX_Proyecto*) tiene su propia configuración inicial: que termine ella primero.
             if (File.Exists(StandaloneMarker) && (!File.Exists(StandaloneState) || !File.ReadAllText(StandaloneState).Trim().StartsWith("3", StringComparison.Ordinal))) return;
+            bool dirty = false;
+            for (int i = 0; i < EditorSceneManager.sceneCount; i++) if (EditorSceneManager.GetSceneAt(i).isDirty) dirty = true;
+            // DRUMIX solo va en los niveles: si quedó un DRUMIX_ROOT generado en SampleScene/BasicScene/BackUpNiveles, se quita.
+            if (!dirty) { try { DrumixSceneGuard.CleanProjectScenes(); } catch (Exception e) { Debug.LogException(e); } }
             string why = WhatIsMissing();
-            if (why == null) return;
-            for (int i = 0; i < EditorSceneManager.sceneCount; i++)
-                if (EditorSceneManager.GetSceneAt(i).isDirty)
+            if (why == null)
+            {
+                var active = EditorSceneManager.GetActiveScene();
+                var levels = DrumixBuilder.FindTeamLevelScenes();
+                // Unity abre la última escena usada (a veces SampleScene, que es de prueba del equipo y no tiene DRUMIX):
+                // si no hay cambios sin guardar, se abre el Nivel 1 para que Play muestre el juego.
+                if (levels.Count > 0 && !DrumixSceneGuard.Targets().Contains(active.path))
                 {
-                    Debug.LogWarning("[DRUMIX] " + why + ", pero tienes cambios sin guardar: guarda y usa DRUMIX > ARMAR TODO (1 click).");
-                    return;
+                    if (!dirty) { EditorSceneManager.OpenScene(levels[0], OpenSceneMode.Single); Debug.Log("[DRUMIX] Abrí " + levels[0] + " (estaba '" + active.name + "', que no es un nivel DRUMIX)."); }
+                    else Debug.Log("[DRUMIX] Tienes abierta '" + active.name + "', que no es un nivel DRUMIX. Para jugar abre " + levels[0] + " (DRUMIX > Abrir Nivel 1).");
                 }
+                return;
+            }
+            if (dirty)
+            {
+                Debug.LogWarning("[DRUMIX] " + why + ", pero tienes cambios sin guardar: guarda y usa DRUMIX > ARMAR TODO (1 click).");
+                return;
+            }
             Debug.Log("[DRUMIX] " + why + ": armando solo (una vez)...");
             try
             {

@@ -90,6 +90,7 @@ namespace Drumix
 
         public static void PlayUISound(bool click)
         {
+            if (click && DrumixTeamBridge.RouteClick()) return; // clic del AudioManager del equipo (SFX_ClicBoton), sin doble sonido
             var ui = Instance;
             if (!ui || !ui.uiSource) return;
             var clip = click ? ui.clickClip : ui.hoverClip;
@@ -698,10 +699,8 @@ namespace Drumix
         }
 
         // =====================================================================================  PC / VR
-        static bool HeadsetActive()
-        {
-            return XRSettings.isDeviceActive && InputDevices.GetDeviceAtXRNode(XRNode.CenterEye).isValid;
-        }
+        /// Visor real o simulador XR elegido a propósito (useXRSimulator) = panel VR; si no, pantalla completa (PC).
+        static bool HeadsetActive() { return DrumixXR.XRViewActive(); }
         void UpdateMode()
         {
             if (!Canvas) return;

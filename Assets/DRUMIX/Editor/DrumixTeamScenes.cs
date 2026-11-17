@@ -120,7 +120,7 @@ namespace Drumix.EditorTools
                     xri = true;
                     left = TeamHand(rig, root.transform, true); right = TeamHand(rig, root.transform, false);
                     var view = Child("Vista PC (DRUMIX)", root.transform, Vector3.zero).AddComponent<DrumixDesktopView>();
-                    view.target = camera; view.space = root.transform;
+                    view.target = camera; view.space = root.transform; view.rig = rig;
                     view.desktopPosition = new Vector3(0, lift + DrumixScaleRules.SeatedEyeHeight, -DrumixScaleRules.SeatedBack);
                     view.desktopEuler = new Vector3(DrumixScaleRules.SeatedPitch, 0, 0);
                     report.AppendLine("  Rig: el XR Origin DEL EQUIPO (se sienta en la batería al dar Play; su locomoción se apaga).");

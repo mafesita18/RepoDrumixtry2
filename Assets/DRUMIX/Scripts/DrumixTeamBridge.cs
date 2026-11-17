@@ -16,6 +16,14 @@ namespace Drumix
         public bool useTeamAudioManager = true;
         [Tooltip("Si en la escena hay un SequenceManager del equipo, cada fallo de DRUMIX llama su ValidarError(). DRUMIX sigue siendo quien juzga (no hay dos secuencias).")]
         public bool forwardMissesToTeamSequence = true;
+        [Header("Sonidos del AudioManager del equipo (Tugui): se usan los suyos, no se duplican")]
+        [Tooltip("El clic de los botones DRUMIX suena con SFX_ClicBoton del AudioManager (si tiene clip). Si no hay AudioManager, suena el clic de DRUMIX.")]
+        public bool teamUiClick = true;
+        [Tooltip("SFX_Exito en cada racha (combo) y SFX_Error al fallar una nota (con pausa mínima para no saturar).")]
+        public bool teamHitSfx = true;
+        [Min(0f)] public float errorSfxCooldown = 0.8f;
+        [Tooltip("Si un nivel DRUMIX trae su propia música, el ambiente del AudioManager se pausa mientras suena la canción y vuelve en el menú/resultados.")]
+        public bool pauseTeamAmbientForMusic = true;
         public string[] onSongStart = new string[0];
         public string[] onPass = new string[0];
         public string[] onFail = new string[0];
@@ -28,10 +36,45 @@ namespace Drumix
                 if (DrumixUtil.FindType(n) != null) found += n + " ";
             Debug.Log("[DRUMIX] Scripts del equipo detectados (se respetan, no se reemplazan): " + (found.Length > 0 ? found : "ninguno"));
         }
-        void OnEnable() { DrumixEvents.OnStateChanged += State; DrumixEvents.OnSongFinished += Finished; DrumixEvents.OnMiss += Miss; }
-        void OnDisable() { DrumixEvents.OnStateChanged -= State; DrumixEvents.OnSongFinished -= Finished; DrumixEvents.OnMiss -= Miss; }
+        static DrumixTeamBridge active;
+        float lastErrorSfx = -10f; bool ambientPaused;
+        void OnEnable() { active = this; DrumixEvents.OnStateChanged += State; DrumixEvents.OnSongFinished += Finished; DrumixEvents.OnMiss += Miss; DrumixEvents.OnCombo += Combo; }
+        void OnDisable()
+        {
+            if (active == this) active = null;
+            DrumixEvents.OnStateChanged -= State; DrumixEvents.OnSongFinished -= Finished; DrumixEvents.OnMiss -= Miss; DrumixEvents.OnCombo -= Combo;
+            if (ambientPaused) { ambientPaused = false; CallIfPresent("AudioManager", "ReproducirAmbiente"); }
+        }
+
+        /// Lo llama DrumixUI al hacer clic: true = ya sonó el clic del equipo (DRUMIX no suena el suyo, nada doble).
+        public static bool RouteClick()
+        {
+            if (!active || !active.isActiveAndEnabled || !active.teamUiClick || !TeamHasClip("sfxClicBoton")) return false;
+            return CallIfPresent("AudioManager", "ReproducirSFXClicBoton");
+        }
+        void Combo(int combo) { if (teamHitSfx && TeamHasClip("sfxExito")) CallIfPresent("AudioManager", "ReproducirSFXExito"); }
+
+        /// ¿El AudioManager del equipo existe y tiene ese clip asignado? (campo privado serializado, por reflexión)
+        static bool TeamHasClip(string field)
+        {
+            object am = FindInstance("AudioManager");
+            if (am == null) return false;
+            try
+            {
+                var f = am.GetType().GetField(field, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                return f != null && f.GetValue(am) as AudioClip;
+            }
+            catch (Exception) { return false; }
+        }
+
         void State(DrumixState s)
         {
+            if (pauseTeamAmbientForMusic)
+            {
+                var g = DrumixGame.Instance; var lvl = g ? g.CurrentLevel : null;
+                if (s == DrumixState.Countdown && lvl && lvl.music && !ambientPaused) ambientPaused = CallIfPresent("AudioManager", "DetenerAmbiente");
+                else if ((s == DrumixState.Menu || s == DrumixState.Results) && ambientPaused) { ambientPaused = false; CallIfPresent("AudioManager", "ReproducirAmbiente"); }
+            }
             if (s != DrumixState.Countdown) return;
             teamSequence = forwardMissesToTeamSequence ? FindInstance("SequenceManager") as UnityEngine.Object : null;
             if (teamSequence && logDetected) Debug.Log("[DRUMIX] SequenceManager del equipo conectado: sus ValidarError() reciben los fallos de DRUMIX.");
@@ -43,6 +86,8 @@ namespace Drumix
         /// Solo fallos de NOTA (no los 'stray', que es lo que reporta el propio SequenceManager): así nunca hay bucle.
         void Miss(DrumixHitInfo info)
         {
+            if (teamHitSfx && !info.stray && Time.unscaledTime - lastErrorSfx >= errorSfxCooldown && TeamHasClip("sfxError"))
+            { lastErrorSfx = Time.unscaledTime; CallIfPresent("AudioManager", "ReproducirSFXError"); }
             if (!forwardMissesToTeamSequence || info.stray || forwarding || !teamSequence) return;
             forwarding = true;
             try
